@@ -41,15 +41,12 @@ PROMPT_TEMPLATE = """Convert the question into an SQL query using the table sche
 
 def build_formatting_func(tokenizer):
     def formatting_func(example):
-        texts = []
-        for context, question, answer in zip(
-            example["context"], example["question"], example["answer"]
-        ):
-            text = PROMPT_TEMPLATE.format(
-                context=context, question=question, answer=answer
-            )
-            texts.append(text + tokenizer.eos_token)
-        return texts
+        text = PROMPT_TEMPLATE.format(
+            context=example["context"],
+            question=example["question"],
+            answer=example["answer"],
+        )
+        return text + tokenizer.eos_token
 
     return formatting_func
 
@@ -136,7 +133,7 @@ def main():
         learning_rate=args.lr,
         logging_steps=10,
         save_strategy="epoch",
-        max_seq_length=args.max_seq_length,
+        max_length=args.max_seq_length,
         bf16=True,
         report_to="none",
         packing=False,
