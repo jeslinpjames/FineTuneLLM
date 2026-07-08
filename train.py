@@ -101,7 +101,7 @@ def main():
     model = AutoModelForCausalLM.from_pretrained(
         args.model_name,
         quantization_config=quant_config,
-        device_map="cuda",
+        device_map={"": 0},
         torch_dtype=torch.bfloat16,
     )
 

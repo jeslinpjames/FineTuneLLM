@@ -56,7 +56,7 @@ def main():
     tokenizer = AutoTokenizer.from_pretrained(args.adapter_dir)
     base_model = AutoModelForCausalLM.from_pretrained(
         args.base_model,
-        device_map="cuda",
+        device_map={"": 0},
         torch_dtype=torch.bfloat16,
     )
     model = PeftModel.from_pretrained(base_model, args.adapter_dir)
