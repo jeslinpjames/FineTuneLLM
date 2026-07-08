@@ -44,12 +44,20 @@ def main():
     parser.add_argument("--max_new_tokens", type=int, default=128)
     args = parser.parse_args()
 
+    if not torch.cuda.is_available():
+        raise RuntimeError(
+            "CUDA is not available inside this container. Run with "
+            "`docker run --gpus all ...` and make sure the NVIDIA Container "
+            "Toolkit is installed on the host."
+        )
+    print(f"Using GPU: {torch.cuda.get_device_name(0)}")
+
     print(f"Loading base model {args.base_model} + adapter {args.adapter_dir}")
     tokenizer = AutoTokenizer.from_pretrained(args.adapter_dir)
     base_model = AutoModelForCausalLM.from_pretrained(
         args.base_model,
-        device_map="auto" if torch.cuda.is_available() else None,
-        torch_dtype=torch.bfloat16 if torch.cuda.is_available() else torch.float32,
+        device_map="cuda",
+        torch_dtype=torch.bfloat16,
     )
     model = PeftModel.from_pretrained(base_model, args.adapter_dir)
     model.eval()
