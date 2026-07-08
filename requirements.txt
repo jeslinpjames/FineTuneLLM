@@ -1,11 +1,16 @@
 # torch is installed separately in the Dockerfile with the CUDA 12.1 wheel
 # (--index-url https://download.pytorch.org/whl/cu121) — do not add a plain
 # "torch" line here or pip may resolve a CPU-only build instead.
-transformers>=4.44.0
-datasets>=2.20.0
-peft>=0.12.0
-trl>=0.9.6
-accelerate>=0.33.0
-bitsandbytes>=0.43.1
-sentencepiece
-protobuf
+#
+# Versions below are pinned deliberately and verified to resolve together
+# with `pip install --dry-run`. trl's SFTConfig/SFTTrainer API has changed
+# across releases (e.g. max_seq_length -> max_length), so an unpinned
+# install can silently break train.py on a future `docker build`.
+transformers==4.51.3
+datasets==3.1.0
+peft==0.14.0
+trl==0.19.1
+accelerate==1.4.0
+bitsandbytes==0.45.0
+sentencepiece==0.2.0
+protobuf==5.29.1
